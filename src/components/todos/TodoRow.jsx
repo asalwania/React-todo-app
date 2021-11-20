@@ -7,22 +7,25 @@ import { StyledTableCell, StyledTableRow } from "./todos.styles";
 import { doc, updateDoc, deleteDoc } from "@firebase/firestore";
 
 import { db } from "../../config/firebase.config";
+import { useDispatch } from "react-redux";
+import { getTodosData } from "../../redux/slices/todos.slice";
 
-const TodoRow = ({ todo, getTodos }) => {
+const TodoRow = ({ todo }) => {
   const [openEdit, setOpenEdit] = React.useState(false);
+  const dispatch = useDispatch();
 
   const updateTodo = async (id, e) => {
     const todosDoc = doc(db, "todos", id);
     const newCategory = { category: e.target.value };
     await updateDoc(todosDoc, newCategory);
-    getTodos();
+    dispatch(getTodosData());
     setOpenEdit(false);
   };
 
   const deleteTodo = async (id) => {
     const todosDoc = doc(db, "todos", id);
     await deleteDoc(todosDoc);
-    getTodos();
+    dispatch(getTodosData());
   };
 
   return (

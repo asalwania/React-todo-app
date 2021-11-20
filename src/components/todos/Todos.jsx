@@ -14,18 +14,23 @@ import TodoRow from "./TodoRow";
 import AddTodoForm from "../forms/AddTodoForm";
 import { StyledTableCell } from "./todos.styles";
 
-export default function Todos() {
-  const [todoData, setTodoData] = React.useState([]);
+import { useDispatch, useSelector } from "react-redux";
+import { getTodosData } from "../../redux/slices/todos.slice";
 
-  async function getTodos() {
-    const resData = await getDocs(todosRef);
-    setTodoData(resData.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-  }
+export default function Todos() {
+  const dispatch = useDispatch();
+  const { status, todos } = useSelector((state) => state.rootReducer.todo);
+  console.log(status, todos);
+
+  //   async function getTodos() {
+  //     const resData = await getDocs(todosRef);
+  //     setTodoData(resData.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+  //   }
 
   //   fetch todos data
   React.useEffect(() => {
-    getTodos();
-  }, []);
+    dispatch(getTodosData());
+  }, [dispatch]);
 
   return (
     <>
@@ -42,14 +47,14 @@ export default function Todos() {
           </TableHead>
           <TableBody>
             {/* todos list */}
-            {todoData.map((todo) => (
-              <TodoRow key={todo.id} todo={todo} getTodos={getTodos} />
+            {todos.map((todo) => (
+              <TodoRow key={todo.id} todo={todo} />
             ))}
           </TableBody>
         </Table>
       </TableContainer>
       {/* add todo form */}
-      <AddTodoForm getTodos={getTodos} />
+      <AddTodoForm />
     </>
   );
 }
